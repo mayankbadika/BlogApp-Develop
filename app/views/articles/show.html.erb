@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand">Welcome to the Rails Blog</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="<%= articles_path%>">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%= users_path%>">Users</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="<%= new_article_path%>">Blog</a></li>
+        <% if logged_in? %>
+          <li><%= link_to "Log out", logout_path, method: :delete ,class:"nav-link"%></li>
+          <li><%= link_to "Edit Profile", edit_user_path(current_user) ,class:"nav-link"%></li>
+        <% else %>
+          <li><%= link_to "Log in", login_path, method: :get ,class:"nav-link" %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+<% if @article.user %>
+  <ul class="listing">
+    <div class="row" >
+      <div class="col-md-4 col-md-offset-4">
+        <li><%= link_to gravatar_for(@article.user), user_path(@article.user) %></li>
+        <li class="article-title"><%= link_to @article.user.username, user_path(@article.user) %></li>
+        <li><small><%= pluralize(@article.user.articles.count, "article") if @article.user.articles %></small></li>
+      </div>
+    </div>
+  </ul>
+<% end %>
+<h2><%= @article.title %></h2>
+<% if@article.avatar.attached? %>
+  <image src="<%=(url_for(@article.avatar)) %>" width="100%" height="400" ></image>
+<% end %>
+
+<p class="lh-sm font-monospace border m-5 pb-5"><%= @article.body %></p>
+
+<h2> Comments</h2>
+<%= render @article.comments %>
+
+<h2>Add a comment</h2>
+<%= render "comments/form" %>
+<% if logged_in? %>
+  <%= link_to "Edit",edit_article_path(@article),class: "btn btn-xs btn-primary" %>
+  <%= link_to "Delete" ,article_path(@article),method: :delete,data: { confirm: "Are you sure?"} ,class: "btn btn-danger"%>
+<%end %>
+<%= link_to 'Back', articles_path, class: "btn btn-xs btn-success" %>
